@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	app := app.NewApp("0.0.0.0:5000")
+	app := app.NewApp(":5000")
 
 	if err := app.Run(); err != nil {
 		log.Fatalf("Application error: %v", err)
