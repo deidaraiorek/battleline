@@ -37,6 +37,9 @@ func (flag *Flag) GetFormationType(cards []Card) (int, int) {
 	})
 
 	total := 0
+	for _, card := range cards {
+		total += card.Value
+	}
 	if flag.Fogged {
 		return HOST, total
 	}
