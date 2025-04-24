@@ -95,18 +95,53 @@ func (a *App) handleJoinRoom(w http.ResponseWriter, r *http.Request) {
 }
 
 func handlePlayerMessages(conn *websocket.Conn, room *game.Game, playerId string) {
+	conn.SetPingHandler(func(string) error {
+		conn.SetReadDeadline(time.Now().Add(60 * time.Second))
+		return nil
+	})
+
+	ticker := time.NewTicker(30 * time.Second)
+	defer ticker.Stop()
+
+	done := make(chan struct{})
+	defer close(done)
+
+	go func() {
+		for {
+			select {
+			case <-ticker.C:
+				if err := conn.WriteControl(websocket.PingMessage, []byte{}, time.Now().Add(10*time.Second)); err != nil {
+					log.Printf("Ping error: %v", err)
+					return
+				}
+			case <-done:
+				return
+			}
+		}
+	}()
+
+	conn.SetReadDeadline(time.Now().Add(60 * time.Second))
+
 	for {
 		_, message, err := conn.ReadMessage()
 		if err != nil {
-			fmt.Println("Read error:", err)
+			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseNormalClosure) {
+				log.Printf("Unexpected close error: %v", err)
+			} else {
+				log.Printf("Connection closed: %v", err)
+			}
 			break
 		}
+
+		conn.SetReadDeadline(time.Now().Add(180 * time.Second))
+
 		var msg Message
 		err = json.Unmarshal(message, &msg)
 		if err != nil {
 			log.Println("JSON unmarshal error:", err)
 			continue
 		}
+
 		handleMessage(msg, room, playerId)
 		room.CheckWinState()
 		BroadcastGameState(room)

@@ -77,8 +77,12 @@ export function WebSocketProvider({ children, roomId }) {
       console.log("Connection closed:", event.code, event.reason);
       setIsConnected(false);
 
-      if (event.code !== 1000) {
-        setError("Connection lost. Please refresh the page.");
+      if (event.code !== 1000 && event.code !== 1001) {
+        setTimeout(() => {
+          if (!isConnected) {
+            setError("Connection lost. Please refresh the page.");
+          }
+        }, 3000);
       }
     });
 
