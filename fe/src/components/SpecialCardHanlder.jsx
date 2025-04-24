@@ -289,7 +289,9 @@ const SpecialCardHandler = ({
 
     // For Redeploy, get player's cards
     if (card.Name === "Redeploy") {
-      return flag.formationMap?.[playerId]?.hand || [];
+      return (flag.formationMap?.[playerId]?.hand || []).filter(
+        (card) => !card.IsSpecial
+      );
     }
 
     // For Deserter and Traitor, get opponent's cards
@@ -297,7 +299,11 @@ const SpecialCardHandler = ({
       const opponentId = Object.keys(flag.formationMap || {}).find(
         (id) => id !== playerId
       );
-      return opponentId ? flag.formationMap[opponentId]?.hand || [] : [];
+      return opponentId
+        ? (flag.formationMap[opponentId]?.hand || []).filter(
+            (card) => !card.IsSpecial
+          )
+        : [];
     }
 
     return [];
@@ -613,7 +619,7 @@ const SpecialCardHandler = ({
                 <h4 className="font-medium mb-2">Select a card to take:</h4>
                 <div className="flex justify-center space-x-2">
                   {cardsOnFlag
-                    .filter((card) => !card.IsSpecial) // Traitor can only take troop cards, not tactics
+                    .filter((card) => !card.IsSpecial)
                     .map((card, index) => (
                       <div
                         key={`flag-card-${index}`}
