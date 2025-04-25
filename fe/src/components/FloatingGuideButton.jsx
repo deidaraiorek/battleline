@@ -155,7 +155,8 @@ const FloatingGuideButton = () => {
                 <li>
                   <strong>Leader (Alexander, Darius):</strong> Wild cards. Play
                   a Leader like any Troop card, but define the color and value
-                  when the Flag is resolved.
+                  when the Flag is resolved. If you have 2 leaders, you have to
+                  keep one leader on your hand for the whole game
                 </li>
                 <li>
                   <strong>Companion Cavalry:</strong> Play this card like any
@@ -193,14 +194,14 @@ const FloatingGuideButton = () => {
                   from his hand.
                 </li>
                 <li>
-                  <strong>Redeploy:</strong> The player chooses anyone Troop or
-                  Tactics card from his side next to an unclaimed Flag, and
-                  places it into another available slot, or discards it.
+                  <strong>Redeploy:</strong> The player chooses anyone Troop
+                  card from his side next to an unclaimed Flag, and places it
+                  into another available slot, or discards it.
                 </li>
                 <li>
                   <strong>Deserter:</strong> The player may choose any one Troop
-                  or Tactics card from the opponent's side next to an unclaimed
-                  Flag, and discards it.
+                  card from the opponent's side next to an unclaimed Flag, and
+                  discards it.
                 </li>
                 <li>
                   <strong>Traitor:</strong> The player may choose anyone Troop

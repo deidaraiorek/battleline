@@ -143,6 +143,28 @@ function GameBoard() {
       case "Darius":
       case "Cavalry":
       case "Shield Bearers":
+        if (card.Name === "Alexander" || card.Name === "Darius") {
+          const hasPlayedOppositeLeader = gameState.flags.some((flagObj) => {
+            const flagId = Object.keys(flagObj)[0];
+            const flag = flagObj[flagId];
+            const playerFormation = flag.formationMap?.[playerId]?.hand || [];
+
+            return playerFormation.some(
+              (playedCard) =>
+                (card.Name === "Alexander" && playedCard.Name === "Darius") ||
+                (card.Name === "Darius" && playedCard.Name === "Alexander")
+            );
+          });
+
+          if (hasPlayedOppositeLeader) {
+            toast.error(
+              `You cannot play ${card.Name} because you have already played ${
+                card.Name === "Alexander" ? "Darius" : "Alexander"
+              }`
+            );
+            return;
+          }
+        }
         if (!selectedFlagId) {
           toast.error("Select a flag to play this card on");
           return;
