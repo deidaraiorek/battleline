@@ -50,6 +50,9 @@ func (a *App) handleJoinRoom(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	room.Lock.Lock()
+	defer room.Lock.Unlock()
+
 	playerId := r.URL.Query().Get("playerId")
 	if playerId != "" && room.Players[playerId] != nil {
 		log.Printf("Player %s reconnecting to room %s", playerId, id)
@@ -72,12 +75,12 @@ func (a *App) handleJoinRoom(w http.ResponseWriter, r *http.Request) {
 				"roomId":   id,
 			},
 		})
-
+		log.Printf("Reconnection attempt - Room: %s, PlayerID: %s, PlayerExists: %v",
+			id, playerId, room.Players[playerId] != nil)
 		go handlePlayerMessages(conn, room, playerId)
 		return
 	}
-	room.Lock.Lock()
-	defer room.Lock.Unlock()
+
 	if room.Status == game.Full {
 		http.Error(w, "Room is full", http.StatusForbidden)
 		return
@@ -148,6 +151,14 @@ func handlePlayerMessages(conn *websocket.Conn, room *game.Game, playerId string
 	}()
 
 	conn.SetReadDeadline(time.Now().Add(60 * time.Second))
+	defer func() {
+		room.Lock.Lock()
+		if player, exists := room.Players[playerId]; exists {
+			player.Conn = nil
+			log.Printf("Player %s disconnected, cleaned up connection", playerId)
+		}
+		room.Lock.Unlock()
+	}()
 
 	for {
 		_, message, err := conn.ReadMessage()

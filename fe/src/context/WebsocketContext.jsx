@@ -86,6 +86,8 @@ export function WebSocketProvider({ children, roomId }) {
 
     socket.addEventListener("error", (event) => {
       console.error("WebSocket error:", event);
+      console.error("Error code:", event.code, "Reason:", event.reason);
+
       setError("Connection error occurred");
     });
 
