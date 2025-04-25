@@ -49,6 +49,33 @@ func (a *App) handleJoinRoom(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Room not found", http.StatusNotFound)
 		return
 	}
+
+	playerId := r.URL.Query().Get("playerId")
+	if playerId != "" && room.Players[playerId] != nil {
+		log.Printf("Player %s reconnecting to room %s", playerId, id)
+		conn, err := upgrader.Upgrade(w, r, nil)
+		if err != nil {
+			http.Error(w, "Can not establish connection", http.StatusInternalServerError)
+			return
+		}
+
+		player := room.Players[playerId]
+		player.Conn = conn
+		msg := preparePlayerView(player, room)
+		conn.WriteJSON(msg)
+		BroadcastGameState(room)
+
+		conn.WriteJSON(Message{
+			Type: "connected",
+			Payload: map[string]string{
+				"playerId": playerId,
+				"roomId":   id,
+			},
+		})
+
+		go handlePlayerMessages(conn, room, playerId)
+		return
+	}
 	room.Lock.Lock()
 	defer room.Lock.Unlock()
 	if room.Status == game.Full {
