@@ -73,7 +73,6 @@ export function WebSocketProvider({ children, roomId }) {
           setError(message.payload.message);
           break;
         case "notice":
-          console.log("bruhhhhh", message.payload);
           setNotification({
             type: "specialCard",
             cardName: message.payload.cardName,
