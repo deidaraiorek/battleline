@@ -210,12 +210,37 @@ func handleMessage(msg Message, room *game.Game, playerId string) {
 		if parsePayload(msg.Payload, &payload) {
 			room.HandleSpecialActions(payload, playerId)
 		}
+	case "chat_message":
+		for _, player := range room.Players {
+			if player.Conn != nil {
+				payload, ok := msg.Payload.(map[string]interface{})
+				if !ok {
+					log.Printf("Invalid chat message payload format: %v", msg.Payload)
+					continue
+				}
 
-	// case "chatMessage":
-	// 	var payload ChatMessagePayload
-	// 	if parsePayload(msg.Payload, &payload) {
-	// 		handleChatMessage(payload, room, playerId)
-	// 	}
+				playerId, ok := payload["playerId"].(string)
+				if !ok {
+					log.Printf("Invalid playerId in chat message: %v", payload["playerId"])
+					continue
+				}
+
+				message, ok := payload["message"].(string)
+				if !ok {
+					log.Printf("Invalid message in chat message: %v", payload["message"])
+					continue
+				}
+
+				chatPayload := map[string]interface{}{
+					"playerId": playerId,
+					"message":  message,
+				}
+				player.Conn.WriteJSON(Message{
+					Type:    "chat_message",
+					Payload: chatPayload,
+				})
+			}
+		}
 	default:
 		fmt.Println("Unknown message type:", msg.Type)
 	}
