@@ -9,7 +9,6 @@ export function CreateRoomButton() {
 
   const handleCreateRoom = async () => {
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
-
     setIsLoading(true);
     try {
       const { data } = await axios.post(`${backendUrl}/room/create`);

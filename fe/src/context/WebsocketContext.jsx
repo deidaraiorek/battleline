@@ -19,6 +19,8 @@ export function WebSocketProvider({ children, roomId }) {
   const [reconnectAttempts, setReconnectAttempts] = useState(0);
   const reconnectTimeoutRef = useRef(null);
 
+  const [chatMessages, setChatMessages] = useState([]);
+
   const socketRef = useRef(null);
 
   const sendMessage = (type, payload) => {
@@ -33,6 +35,32 @@ export function WebSocketProvider({ children, roomId }) {
       console.error("WebSocket is not connected");
     }
   };
+  // Send chat message
+  const sendChatMessage = (message) => {
+    console.log("Attempting to send chat message. Connection status:", socketRef.current?.readyState);
+    
+    if (!socketRef.current) {
+      console.error("WebSocket not initialized");
+      return;
+    }
+    
+    if (socketRef.current.readyState !== WebSocket.OPEN) {
+      console.error("WebSocket is not connected. Current state:", socketRef.current.readyState);
+      // Try to reconnect
+      connect();
+      return;
+    }
+
+    const chatMessage = {
+      type: "chat_message",
+      payload: {
+        playerId,
+        message,
+      },
+    };
+    console.log("Sending chat message:", chatMessage);
+    socketRef.current.send(JSON.stringify(chatMessage));
+  };
 
   const connect = () => {
     if (!roomId) return;
@@ -40,7 +68,7 @@ export function WebSocketProvider({ children, roomId }) {
     const backendUrl = import.meta.env.VITE_BACKEND_URL.replace(/^http/, "ws");
     const connectionUrl = playerId
       ? `${backendUrl}/room/${roomId}?playerId=${playerId}`
-      : `${backendUrl}/room/${roomId}`;
+      : `${backendUrl}/room/${roomId}`;    
     if (socketRef.current) {
       socketRef.current.close();
     }
@@ -68,6 +96,12 @@ export function WebSocketProvider({ children, roomId }) {
           break;
         case "gamestate":
           setGameState(message.payload);
+          break;
+        case "chat_message":
+          setChatMessages((preMessages) => {
+            const newMessages = [...preMessages, message.payload];
+            return newMessages;
+          });
           break;
         case "error":
           setError(message.payload.message);
@@ -141,6 +175,8 @@ export function WebSocketProvider({ children, roomId }) {
         error,
         sendMessage,
         notification,
+        sendChatMessage,
+        chatMessages,
         clearNotification: () => setNotification(null),
       }}
     >
