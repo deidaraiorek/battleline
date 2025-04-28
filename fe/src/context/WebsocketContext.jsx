@@ -103,16 +103,37 @@ export function WebSocketProvider({ children, roomId }) {
             return newMessages;
           });
           break;
+        case "card_play":
+          // Notification for played card
+          const cardPlayMessage = {
+            playerId: message.payload.playerId,
+            message: `played ${message.payload.cardName} at Column ${message.payload.column + 1}`
+          };
+          setChatMessages((preMessages) => {
+            const newMessages = [...preMessages, cardPlayMessage];
+            return newMessages;
+          });
+          break;
         case "error":
           setError(message.payload.message);
           break;
         case "notice":
           setNotification({
-            type: "specialCard",
+            type: message.payload.type || "specialCard",
             cardName: message.payload.cardName,
             cardDescription: message.payload.cardDescription,
+            cardPlay: message.payload.cardPlay,
+            column: message.payload.column,
+            playerId: message.payload.playerId
           });
-
+          if (message.payload.cardPlay) {
+            const notificationMessage = {
+              playerId: message.payload.playerId,
+              message: `played ${message.payload.cardName} at Column ${message.payload.column + 1}`
+            };
+            setChatMessages((preMessages) => [...preMessages, notificationMessage]);
+          }
+          break;
         default:
       }
     });
