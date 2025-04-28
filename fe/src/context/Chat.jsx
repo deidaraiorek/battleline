@@ -1,11 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import chat_icon from "../chat-icon.png";
 import { useWebSocket } from "./WebsocketContext";
 
 const Chat = () => {
-  const { chatMessages, sendChatMessage } = useWebSocket();
+  const { chatMessages, sendChatMessage, playerId } = useWebSocket();
   const [input, setInput] = useState("");
   const [showChat, setShowChat] = useState(false);
+
+  
+  useEffect(() => {
+    console.log("Current chat messages:", chatMessages);
+  }, [chatMessages]);
 
   const handleSendMessage = () => {
     if (input.trim() !== "") {
@@ -55,12 +60,23 @@ const Chat = () => {
             </button>
           </div>
           <div className="space-y-4 overflow-y-auto max-h-48 mb-4">
-            {chatMessages.map((msg, index) => (
-              <div key={index} className="p-3 bg-gray-200 rounded-md text-gray-800">
-                <span className="font-bold">{msg.playerId}: </span>
-                {msg.message}
-              </div>
-            ))}
+            {chatMessages.map((msg, index) => {
+              return (
+                <div 
+                  key={index} 
+                  className={`p-3 rounded-md text-gray-800 ${
+                    msg.message.includes("played") 
+                      ? "bg-blue-100 border-l-4 border-blue-500" 
+                      : "bg-gray-200"
+                  }`}
+                >
+                  <span className="font-bold mr-1">
+                    {msg.playerId === playerId ? "You" : "Opponent"}: 
+                  </span>
+                  {msg.message}
+                </div>
+              );
+            })}
           </div>
           <div className="flex items-center">
             <input

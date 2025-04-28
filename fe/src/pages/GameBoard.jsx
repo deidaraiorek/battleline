@@ -90,6 +90,10 @@ function GameBoard() {
       return;
     }
     if (selectedFlagId && checkFlagAvailabilty(selectedFlagId, true)) {
+      sendMessage("card_play", {
+        cardName: `${card.Value} ${card.Color}`,
+        column: parseInt(selectedFlagId)
+      });
       sendMessage("playCard", {
         card: card,
         flagId: parseInt(selectedFlagId),

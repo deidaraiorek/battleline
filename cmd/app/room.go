@@ -192,7 +192,20 @@ func handleMessage(msg Message, room *game.Game, playerId string) {
 		var payload PlayCardPayload
 		if parsePayload(msg.Payload, &payload) {
 			room.PlayCard(playerId, payload.Card, payload.FlagId)
-			// handlePlayCard(payload, room, playerId)
+			// Send notifications
+			for _, player := range room.Players {
+				if player.Conn != nil {
+					cardPlayPayload := map[string]interface{}{
+						"playerId": playerId,
+						"cardName": fmt.Sprintf("%d %s", payload.Card.Value, payload.Card.Color),
+						"column":   payload.FlagId,
+					}
+					player.Conn.WriteJSON(Message{
+						Type:    "card_play",
+						Payload: cardPlayPayload,
+					})
+				}
+			}
 		}
 	case "drawCard":
 		var payload DrawCardPayload
