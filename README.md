@@ -68,19 +68,6 @@ Open [http://localhost:3000](http://localhost:3000) to start playing.
 
 ---
 
-## 📸 Screenshots
-
-**Room Creation**
-![Room Creation](./assets/IMAGE_PLACEHOLDER_1.png)
-
-**Gameplay Interface**
-![Gameplay](./assets/IMAGE_PLACEHOLDER_2.png)
-
-**Battle in Action**
-![Battlefield](./assets/IMAGE_PLACEHOLDER_3.png)
-
----
-
 ## 💡 Future Improvements
 
 - Add matchmaking and ranked mode
