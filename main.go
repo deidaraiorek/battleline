@@ -10,7 +10,7 @@ import (
 func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "5000"
+		port = "8180"
 	}
 	app := app.NewApp(":" + port)
 	if err := app.Run(); err != nil {
