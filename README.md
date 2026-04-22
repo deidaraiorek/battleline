@@ -1,21 +1,10 @@
 # ⚔️ BattleLine
 
-**BattleLine** is a real-time, two-player strategic card game built for the web. Challenge your friends to a tactical duel where every move counts — plan your plays, outsmart your opponent, and capture flags on the battlefield!
+**BattleLine** is a real-time, two-player strategic card game built for the web. Challenge your friends to a tactical duel where every move counts - plan your plays, outsmart your opponent, and capture flags on the battlefield!
 
 ![Room Creation](./assets/room.png)
 ![Gameplay](./assets/game.png)
 ![Battlefield](./assets/field.png)
-
----
-
-## 🎮 Features
-
-- **Room System** – Instantly create or join private game rooms using a unique 6-character code.
-- **Real-Time Gameplay** – Synchronized state updates using WebSockets for smooth multiplayer experience.
-- **Card-Based Strategy** – Build formations and compete for control over 9 battlefield flags.
-- **Dynamic Turns** – Play, draw, and react as the game evolves turn by turn.
-- **Modern UI** – Clean, minimal interface built with Next.js, TailwindCSS, and React components.
-- **Responsive Design** – Works seamlessly across desktop and mobile devices.
 
 ---
 
@@ -65,19 +54,3 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) to start playing.
-
----
-
-## 💡 Future Improvements
-
-- Add matchmaking and ranked mode
-- Improve AI opponent logic
-- Add sound effects and animations
-- Leaderboard and game history tracking
-
----
-
-## 👨‍💻 Author
-
-Built by [**Dei Pham**](https://github.com/deidaraiorek)  
-If you enjoy the project, feel free to ⭐ star the repo and share feedback!
